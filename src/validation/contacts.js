@@ -8,7 +8,7 @@ export const createContactSchema = Joi.object({
         "any.required": "Username is required",
     }),
     phoneNumber: Joi.string().min(8).max(16).required(),
-    email: Joi.string().email().required(),
+    email: Joi.string().email(),
     isFavourite: Joi.boolean(),
     contactType: Joi.string().valid("work", "home", "personal").required(),
 });
