@@ -16,11 +16,16 @@ export const registerUser = async (payload) => {
   if (user) throw createHttpError(409, "Email in use");
 
   const encryptedPassword = await bcrypt.hash(payload.password, 10);
-
-  return await UsersCollection.create({
+  const createdUser = await UsersCollection.create({
     ...payload,
     password: encryptedPassword,
   });
+
+  return {
+    status: 201,
+    message: "Successfully registered a user!",
+    data: { ...createdUser.toObject(), password: undefined },
+  };
 };
 
 export const loginUser = async (payload) => {
