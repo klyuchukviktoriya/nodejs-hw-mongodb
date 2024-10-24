@@ -2,6 +2,9 @@ import createHttpError from "http-errors";
 import { createContact, deleteContact, getAllContacts, getContactById, updateContact } from "../services/contacts.js";
 import { parsePaginationParams } from "../utils/parsePaginationParams.js";
 import { parseSortParams } from "../utils/parseSortParams.js";
+import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
+import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
+import { env } from "../utils/env.js";
 
 export const getContactsController = async (req, res) => {
     const { page, perPage } = parsePaginationParams(req.query);
@@ -60,11 +63,64 @@ export const createContactController = async (req, res) => {
     });
 };
 
+// export const patchContactController = async (req, res) => {
+//     const { contactId } = req.params;
+//     const userId = req.user._id;
+// // 
+// // 
+// const photo = req.file;
+//     let photoUrl;
+//     if (photo) {
+//         if (env('ENABLE_CLOUDINARY') === 'true') {
+//           photoUrl = await saveFileToCloudinary(photo);
+//         } else {
+//           photoUrl = await saveFileToUploadDir(photo);
+//         }
+//       }
+// // 
+// //    
+// const result = await updateContact(contactId, userId, {
+//     ...req.body,
+//     photo: photoUrl,
+// });
+
+//     if (!result) {
+//         throw createHttpError(404, "Contact not found");
+//     }
+
+//     res.json({
+//         status: 200,
+//         message: "Successfully patched a contact!",
+//         data: result,
+//         // data: result.student,
+//     });
+// };
 export const patchContactController = async (req, res) => {
     const { contactId } = req.params;
     const userId = req.user._id;
 
-    const result = await updateContact(contactId, req.body, userId);
+    const photo = req.file;
+    let photoUrl;
+
+    // Если есть фотография, загружаем ее и получаем URL
+    if (photo) {
+        if (env('ENABLE_CLOUDINARY') === 'true') {
+            photoUrl = await saveFileToCloudinary(photo);
+        } else {
+            photoUrl = await saveFileToUploadDir(photo);
+        }
+    }
+
+    const updateData = {
+        ...req.body,
+    };
+
+    // Если photoUrl получен, добавляем его в обновляемые данные
+    if (photoUrl) {
+        updateData.photo = photoUrl;
+    }
+
+    const result = await updateContact(contactId, userId, updateData);
 
     if (!result) {
         throw createHttpError(404, "Contact not found");
