@@ -4,11 +4,7 @@ import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../ser
 export const registerUserController = async (req, res) => {
     const user = await registerUser(req.body);
 
-    res.status(201).json({
-        status: 201,
-        message: "Successfully registered a user!",
-        data: user,
-    });
+    res.status(201).json(user);
 };
 
 export const loginUserController = async (req, res) => {
