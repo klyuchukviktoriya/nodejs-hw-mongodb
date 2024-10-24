@@ -29,8 +29,8 @@ export const setupServer = () => {
         }),
     );
     app.use(cors());
-   
-    app.use('/uploads', express.static(UPLOAD_DIR));
+
+    app.use("/uploads", express.static(UPLOAD_DIR));
     app.get("/", (req, res) => {
         res.json({
             message: "Hello world!",

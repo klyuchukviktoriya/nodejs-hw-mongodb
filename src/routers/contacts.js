@@ -25,12 +25,12 @@ contactsRouter.get("/:contactId",
 
 contactsRouter.post("/",
     validateBody(createContactSchema),
-    upload.single('photo'),
+    upload.single("photo"),
     ctrlWrapper(createContactController));
 
 contactsRouter.patch("/:contactId",
     validateBody(updateContactSchema),
-    upload.single('photo'),
+    upload.single("photo"),
     ctrlWrapper(patchContactController));
 
 contactsRouter.delete("/:contactId", ctrlWrapper(deleteContactController));
